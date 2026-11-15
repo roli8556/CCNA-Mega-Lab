@@ -181,6 +181,15 @@ Open the `.pkt` file in Packet Tracer 8.x and log in with the credentials below.
 | Enable secret | — | `<hostname>` — e.g. `HQ-R` |
 | AAA login over SSH (TACACS+ / RADIUS) | `netadmin` | `netadmin` |
 
+**Shared keys:**
+
+| Key | Value |
+|---|---|
+| TACACS+ (devices ↔ SRV-AAA) | `tacacskey` |
+| RADIUS (access switches and WLC ↔ SRV-AAA, port 1645) | `radiuskey` |
+| IPsec pre-shared key (HQ-R ↔ B1-R / B2-R) | `isakmpkey` |
+| NTP authentication (key 1) | `ntpkey` |
+
 Hostnames: `HQ-R`, `B1-R`, `B2-R`, `ISP-R`, `Internet-R`, `HQ-DSW1`, `HQ-DSW2`, `HQ-ASW1`, `HQ-ASW2`, `B1-S`, `B2-S`, `DMZ-SW`, `Internet-SW`.
 
 SSH logins go to the AAA server first (SRV-AAA, 10.10.50.10); the local `admin` account only works remotely when the server doesn't answer. Only the management (10.10.99.0/24) and IT (10.10.20.0/24) subnets may SSH in.
