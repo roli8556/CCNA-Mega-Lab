@@ -189,6 +189,8 @@ Open the `.pkt` file in Packet Tracer 8.x and log in with the credentials below.
 | RADIUS (access switches and WLC ↔ SRV-AAA, port 1645) | `radiuskey` |
 | IPsec pre-shared key (HQ-R ↔ B1-R / B2-R) | `isakmpkey` |
 | NTP authentication (key 1) | `ntpkey` |
+| OSPF MD5, area 0 (key 1) | `area0key` |
+| OSPF MD5, area 1 (key 2) | `area1key` |
 
 Hostnames: `HQ-R`, `B1-R`, `B2-R`, `ISP-R`, `Internet-R`, `HQ-DSW1`, `HQ-DSW2`, `HQ-ASW1`, `HQ-ASW2`, `B1-S`, `B2-S`, `DMZ-SW`, `Internet-SW`.
 
