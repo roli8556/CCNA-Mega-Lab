@@ -163,6 +163,12 @@ Central logging, and a **mitigation map** linking each common attack to the cont
 
 ---
 
+## What I learned
+
+This project was a big refresher and test of everything I've learned so far, put into one big project. It mainly solidified concepts I had already learned, and refreshed me on the ones I had slightly forgotten.
+
+---
+
 ## Troubleshooting
 
 The most valuable part of the project was everything that didn't work the first time. **[troubleshooting.md](troubleshooting.md)** documents real problems from the build — and how each one was found — plus 24 break-fix scenarios worked through as trouble tickets (symptom → the command that pinpoints it → fix).
@@ -212,3 +218,5 @@ SSH logins go to the AAA server first (SRV-AAA, 10.10.50.10); the local `admin` 
 ---
 
 *Built by Sam Brismo — IT security student (IT-säkerhetsspecialist, Teknikhögskolan Stockholm), preparing for the Cisco CCNA.*
+
+*Documentation written with help from Claude; the network design, configuration and troubleshooting are my own work.*
