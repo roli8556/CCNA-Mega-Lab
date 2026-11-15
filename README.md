@@ -165,7 +165,7 @@ Central logging, and a **mitigation map** linking each common attack to the cont
 
 ## What I learned
 
-This project was a big refresher and test of everything I've learned so far, put into one big project. It mainly solidified concepts I had already learned, and refreshed me on the ones I had slightly forgotten.
+The purpose of this project was to practically put together everything I've learned this past month for the CCNA exam and from school. It was both a big refresher and something that taught me how an actual network may be "fully" configured. It solidified concepts I had already learned, and refreshed me on the ones I had slightly forgotten.
 
 ---
 
