@@ -15,6 +15,10 @@ The network was built in eleven phases, each one verified and then deliberately 
 
 ## Topology
 
+![Packet Tracer topology](topology.png)
+
+**Logical overview:**
+
 ```mermaid
 flowchart TB
     subgraph INET["Internet"]
@@ -167,6 +171,22 @@ The most valuable part of the project was everything that didn't work the first 
 
 ---
 
+## Try it yourself — lab credentials (demo only)
+
+Open the `.pkt` file in Packet Tracer 8.x and log in with the credentials below. They exist only in this lab and are published on purpose so you can explore and break things yourself. The files in `configs/` stay redacted.
+
+| Account | Username | Password |
+|---|---|---|
+| Local login (console, and SSH fallback) | `admin` | `<hostname>_Password` — e.g. `HQ-R_Password` |
+| Enable secret | — | `<hostname>` — e.g. `HQ-R` |
+| AAA login over SSH (TACACS+ / RADIUS) | `netadmin` | `netadmin` |
+
+Hostnames: `HQ-R`, `B1-R`, `B2-R`, `ISP-R`, `Internet-R`, `HQ-DSW1`, `HQ-DSW2`, `HQ-ASW1`, `HQ-ASW2`, `B1-S`, `B2-S`, `DMZ-SW`, `Internet-SW`.
+
+SSH logins go to the AAA server first (SRV-AAA, 10.10.50.10); the local `admin` account only works remotely when the server doesn't answer. Only the management (10.10.99.0/24) and IT (10.10.20.0/24) subnets may SSH in.
+
+---
+
 ## Repository contents
 
 | Path | Contents |
@@ -175,7 +195,8 @@ The most valuable part of the project was everything that didn't work the first 
 | `troubleshooting.md` | real issues from the build + 24 break-fix tickets |
 | `limitations.md` | Packet Tracer gaps and the real-world equivalent |
 | `configs/` | running configuration of every device (secrets removed) |
-| `megalab.pkt` | the Packet Tracer file (Packet Tracer 8.x) |
+| `topology.png` | the topology as built in Packet Tracer |
+| `Cisco CCNA Mega Lab.pkt` | the Packet Tracer file (Packet Tracer 8.x) |
 
 ---
 
