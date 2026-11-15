@@ -1,0 +1,342 @@
+!
+version 15.1
+service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+security passwords min-length 10
+!
+hostname HQ-R
+!
+login block-for 120 attempts 3 within 60
+login on-failure log
+!
+!
+enable secret <REDACTED>
+!
+!
+!
+!
+!
+aaa new-model
+!
+aaa authentication login CONSOLE local 
+aaa authentication login default group tacacs+ local 
+!
+!
+aaa authorization exec default group tacacs+ local
+!
+aaa accounting exec default start-stop group tacacs+
+!
+!
+!
+!
+no ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+!
+!
+username admin privilege 15 secret <REDACTED>
+username helpdesk privilege 5 secret <REDACTED>
+!
+!
+license udi pid CISCO2911/K9 sn FTX1524W937-
+license boot module c2900 technology-package securityk9
+!
+!
+!
+crypto isakmp policy 10
+ encr aes 256
+ authentication pre-share
+ group 5
+!
+crypto isakmp key <REDACTED> address 203.0.113.6
+crypto isakmp key <REDACTED> address 203.0.113.10
+!
+!
+!
+crypto ipsec transform-set B2_SET esp-aes 256 esp-sha-hmac
+crypto ipsec transform-set B1_SET esp-aes 256 esp-sha-hmac
+!
+crypto map VPN 10 ipsec-isakmp 
+ set peer 203.0.113.10
+ set transform-set B2_SET 
+ match address VPN-B2
+!
+crypto map VPN 20 ipsec-isakmp 
+ set peer 203.0.113.6
+ set transform-set B1_SET 
+ match address VPN-B1
+!
+!
+!
+!
+!
+!
+ip ftp username <REDACTED>
+ip ftp password <REDACTED>
+ip ssh version 2
+ip domain-name lab.local
+ip name-server 10.10.50.11
+!
+!
+spanning-tree mode pvst
+!
+ip ips config location flash:ipsdir retries 1
+ip ips name IOSIPS
+ip ips signature-category
+  category all
+   retired true
+  category ios_ips basic
+   retired false
+class-map type inspect match-all WEB-IN
+ match access-group name TO-WEB
+class-map type inspect match-any INSIDE-TRAFFIC
+ match protocol tcp
+ match protocol udp
+ match protocol icmp
+class-map type inspect match-all DMZ-HTTP
+ match protocol http
+class-map type inspect match-all DMZ-SSH-IT
+ match access-group name IT-SSH
+class-map match-all CM-OSPF
+ match access-group name COPP-OSPF
+class-map match-all CM-SSH
+ match access-group name COPP-SSH
+class-map match-all CM-ICMP
+ match access-group name COPP-ICMP
+!
+policy-map type inspect IN-TO-OUT
+ class type inspect INSIDE-TRAFFIC
+  inspect
+!
+policy-map type inspect OUT-TO-DMZ
+ class type inspect WEB-IN
+  inspect
+!
+policy-map type inspect IN-TO-DMZ
+ class type inspect DMZ-HTTP
+  inspect
+ class type inspect DMZ-SSH-IT
+  inspect
+!
+policy-map COPP
+ class CM-OSPF
+ class CM-SSH
+ class CM-ICMP
+ class class-default
+!
+!
+!
+zone security INSIDE
+zone security DMZ
+zone security OUTSIDE
+zone-pair security IN-OUT source INSIDE destination OUTSIDE
+ service-policy type inspect IN-TO-OUT
+zone-pair security IN-DMZ source INSIDE destination DMZ
+ service-policy type inspect IN-TO-DMZ
+zone-pair security OUT-DMZ source OUTSIDE destination DMZ
+ service-policy type inspect OUT-TO-DMZ
+!
+!
+interface Loopback1
+ ip address 1.1.1.1 255.255.255.255
+!
+interface Tunnel12
+ ip address 172.16.12.1 255.255.255.252
+ mtu 1476
+ tunnel source Serial0/0/1
+ tunnel destination 203.0.113.6
+!
+!
+interface Tunnel13
+ ip address 172.16.13.1 255.255.255.252
+ mtu 1476
+ tunnel source Serial0/0/1
+ tunnel destination 203.0.113.10
+!
+!
+interface Tunnel2
+ no ip address
+ mtu 1476
+!
+!
+interface GigabitEthernet0/0
+ description TO-DMZ
+ ip address 192.168.100.1 255.255.255.0
+ zone-member security DMZ
+ ip nat inside
+ duplex auto
+ speed auto
+ ipv6 address FE80::1 link-local
+ ipv6 enable
+!
+interface GigabitEthernet0/1
+ description TO-DSW1
+ ip address 10.0.0.1 255.255.255.252
+ zone-member security INSIDE
+ ip ospf message-digest-key 1 md5 <REDACTED>
+ ip ospf network point-to-point
+ ip ospf priority 1
+ ip nat inside
+ duplex auto
+ speed auto
+ ipv6 address FE80::1 link-local
+ ipv6 enable
+!
+interface GigabitEthernet0/2
+ description TO-DSW2
+ ip address 10.0.0.5 255.255.255.252
+ zone-member security INSIDE
+ ip ospf message-digest-key 1 md5 <REDACTED>
+ ip ospf network point-to-point
+ ip ospf priority 1
+ ip nat inside
+ duplex auto
+ speed auto
+ ipv6 address FE80::1 link-local
+ ipv6 enable
+!
+interface Serial0/0/0
+ description TO-B1-R
+ ip address 10.0.0.9 255.255.255.252
+ zone-member security INSIDE
+ ip ospf message-digest-key 2 md5 <REDACTED>
+ ip ospf cost 1000
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:ACAD:12::1/64
+ ipv6 enable
+!
+interface Serial0/0/1
+ ip address 203.0.113.2 255.255.255.252
+ ip ips IOSIPS in
+ zone-member security OUTSIDE
+ ip nat outside
+ ipv6 address FE80::1 link-local
+ ipv6 address 2001:DB8:ACAD:1::2/64
+ ipv6 enable
+ no cdp enable
+ clock rate 2000000
+ crypto map VPN
+!
+interface FastEthernet0/1/0
+ switchport mode access
+!
+interface FastEthernet0/1/1
+ switchport mode access
+!
+interface FastEthernet0/1/2
+ switchport mode access
+!
+interface FastEthernet0/1/3
+ switchport mode access
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 1
+ log-adjacency-changes
+ area 1 range 10.20.0.0 255.255.252.0
+ area 2 range 10.30.0.0 255.255.255.0
+ area 1 authentication message-digest
+ area 0 authentication message-digest
+ passive-interface GigabitEthernet0/0
+ auto-cost reference-bandwidth 100000
+ network 10.0.0.8 0.0.0.3 area 1
+ network 172.16.12.0 0.0.0.3 area 1
+ network 172.16.13.0 0.0.0.3 area 2
+ network 10.0.0.0 0.0.0.3 area 0
+ network 10.0.0.4 0.0.0.3 area 0
+ network 1.1.1.1 0.0.0.0 area 0
+ network 192.168.100.0 0.0.0.255 area 0
+ default-information originate
+!
+ip nat inside source list NAT interface Serial0/0/1 overload
+ip nat inside source static 192.168.100.10 203.0.113.33 
+ip classless
+ip route 0.0.0.0 0.0.0.0 203.0.113.1 
+!
+ip flow-export version 9
+!
+ipv6 route ::/0 Serial0/0/1 FE80::3
+!
+ip access-list extended sl_def_acl
+ deny tcp any any eq telnet
+ deny tcp any any eq www
+ deny tcp any any eq 22
+ permit tcp any any eq 22
+ip access-list extended VPN-B2
+ permit gre host 203.0.113.2 host 203.0.113.10
+ip access-list extended VPN-B1
+ permit gre host 203.0.113.2 host 203.0.113.6
+ip access-list standard NAT
+ permit 10.0.0.0 0.255.255.255
+ip access-list standard VTY
+ permit 10.10.99.0 0.0.0.255
+ permit 10.10.20.0 0.0.0.255
+ip access-list extended TO-WEB
+ permit tcp any host 192.168.100.10 eq www
+ permit tcp any host 192.168.100.10 eq 443
+ip access-list extended IT-SSH
+ permit tcp 10.10.20.0 0.0.0.255 host 192.168.100.10 eq 22
+ip access-list extended COPP-OSPF
+ permit ospf any any
+ip access-list extended COPP-SSH
+ permit tcp 10.10.99.0 0.0.0.255 any eq 22
+ permit tcp 10.10.20.0 0.0.0.255 any eq 22
+ip access-list extended COPP-ICMP
+ permit icmp any any
+!
+banner motd HQ-R
+H
+!
+privilege exec level 5 ping
+privilege exec level 5 show
+privilege exec level 5 show ip
+privilege exec level 5 show ip route
+!
+tacacs-server host 10.10.50.10 key <REDACTED>
+!
+!
+snmp-server community <REDACTED> RO
+!
+logging trap debugging
+logging 10.10.50.10
+line con 0
+ logging synchronous
+ login authentication CONSOLE
+!
+line aux 0
+!
+line vty 0 4
+ access-class VTY in
+ login authentication default
+ transport input ssh
+line vty 5 15
+ access-class VTY in
+ login authentication default
+ transport input ssh
+!
+!
+parser view IFADMIN
+ secret <REDACTED>
+ commands configure include interface
+ commands configure include ip
+ commands configure include no
+ commands exec include configure
+ commands exec include configure terminal
+!
+parser view SHOWONLY
+ secret <REDACTED>
+ commands exec include all show
+!
+ntp authentication-key 1 md5 <REDACTED>
+ntp authenticate
+ntp trusted-key 1
+ntp server 10.10.50.10 key 1
+ntp update-calendar
+!
+end
+

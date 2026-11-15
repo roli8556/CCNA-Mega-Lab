@@ -1,0 +1,131 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname ISP-R
+!
+!
+!
+enable secret <REDACTED>
+!
+!
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+!
+!
+!
+license udi pid CISCO2911/K9 sn FTX15244693-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/1
+ description TO-B1-R
+ ip address 203.0.113.5 255.255.255.252
+ duplex auto
+ speed auto
+ ipv6 address FE80::3 link-local
+ ipv6 enable
+!
+interface GigabitEthernet0/2
+ description TO-B2-R
+ ip address 203.0.113.9 255.255.255.252
+ duplex auto
+ speed auto
+ ipv6 address FE80::3 link-local
+ ipv6 enable
+!
+interface Serial0/0/0
+ description TO-HQ-R
+ ip address 203.0.113.1 255.255.255.252
+ ipv6 address FE80::3 link-local
+ ipv6 address 2001:DB8:ACAD:1::1/64
+ ipv6 enable
+!
+interface Serial0/0/1
+ no ip address
+ clock rate 2000000
+ shutdown
+!
+interface FastEthernet0/1/0
+ switchport mode access
+!
+interface FastEthernet0/1/1
+ switchport mode access
+!
+interface FastEthernet0/1/2
+ switchport mode access
+!
+interface FastEthernet0/1/3
+ switchport mode access
+!
+interface GigabitEthernet0/2/0
+ description TO-Internet-Router
+ ip address 203.0.113.13 255.255.255.252
+ ipv6 address FE80::3 link-local
+ ipv6 address 2001:DB8:ACAD:2::1/64
+ ipv6 enable
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip classless
+ip route 203.0.113.32 255.255.255.248 203.0.113.2 
+ip route 198.51.100.0 255.255.255.0 203.0.113.14 
+!
+ip flow-export version 9
+!
+ipv6 route 2001:DB8:ACAD::/48 Serial0/0/0 FE80::1
+ipv6 route 2001:DB8:CAFE::/64 GigabitEthernet0/2/0 FE80::4
+!
+!
+banner motd ISP-R
+I
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+

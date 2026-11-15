@@ -1,0 +1,244 @@
+!
+version 15.0
+service timestamps log datetime msec
+no service timestamps debug datetime msec
+service password-encryption
+!
+hostname B1-S
+!
+enable secret <REDACTED>
+!
+!
+!
+no ip domain-lookup
+ip domain-name lab.local
+!
+username admin secret <REDACTED>
+!
+vtp mode transparent
+!
+ip arp inspection vlan 110,120
+!
+ip dhcp snooping vlan 110,120
+ip dhcp snooping
+!
+spanning-tree mode rapid-pvst
+spanning-tree portfast default
+spanning-tree portfast bpduguard default
+spanning-tree extend system-id
+!
+vlan 110
+ name USERS
+!
+vlan 120
+ name GUEST
+!
+vlan 199
+ name MGMT
+!
+vlan 999
+ name NATIVE
+!
+vlan 1999
+!
+interface FastEthernet0/1
+ switchport access vlan 110
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/2
+ description TO-B1-PC0andIpPhone
+ switchport access vlan 110
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/3
+ description TO-GUESTPc
+ switchport access vlan 120
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/4
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/5
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/6
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/7
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/8
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/9
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/10
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/11
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/12
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/13
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/14
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/15
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/16
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/17
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/18
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/19
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/20
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/21
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/22
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/23
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/24
+ ip dhcp snooping limit rate 10
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface GigabitEthernet0/1
+ description TO-B1-R
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 110,120,199,999
+ ip arp inspection trust
+ ip dhcp snooping trust
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface GigabitEthernet0/2
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan199
+ ip address 10.20.1.66 255.255.255.240
+!
+ip default-gateway 10.20.1.65
+!
+banner motd B1-S
+B
+logging trap debugging
+logging 10.10.50.10
+!
+!
+!
+ip access-list standard VTY
+ permit 10.10.99.0 0.0.0.255
+ permit 10.10.20.0 0.0.0.255
+line con 0
+ password <REDACTED>
+ logging synchronous
+!
+line vty 0 4
+ access-class VTY in
+ login local
+ transport input ssh
+line vty 5 15
+ access-class VTY in
+ login local
+ transport input ssh
+!
+!
+!
+ntp authenticate
+ntp trusted-key 1
+ntp server 1.1.1.1 key 1
+!
+end
+
